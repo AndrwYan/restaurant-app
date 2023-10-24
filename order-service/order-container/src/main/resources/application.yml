@@ -1,0 +1,72 @@
+server:
+  port: 8181
+
+logging:
+  level:
+    com.food.ordering.system: DEBUG
+
+order-service:
+  payment-request-topic-name: payment-request
+  payment-response-topic-name: payment-response
+  restaurant-approval-request-topic-name: restaurant-approval-request
+  restaurant-approval-response-topic-name: restaurant-approval-response
+  customer-topic-name: customer
+  outbox-scheduler-fixed-rate: 10000 #表示自上一次执行时间之后多长时间执行，以毫秒为单位。
+  outbox-scheduler-initial-delay: 10000 #表示首次延迟多长时间后执行，单位毫秒，之后按照
+
+spring:
+  jpa:
+    open-in-view: false
+    show-sql: true
+    database-platform: org.hibernate.dialect.PostgreSQL9Dialect
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL9Dialect
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=order&binaryTransfer=true&reWriteBatchedInserts=true&stringtype=unspecified
+    username: postgres
+    password: admin
+    driver-class-name: org.postgresql.Driver
+    platform: postgres
+    schema: classpath:init-schema.sql
+    initialization-mode: always
+
+kafka-config:
+  bootstrap-servers: localhost:19092, localhost:29092, localhost:39092 # 其实只设置一个也可以，但是建议最好设置两个高可用
+  schema-registry-url-key: schema.registry.url
+  schema-registry-url: http://localhost:8081
+  num-of-partitions: 3    # 提高并发能力
+  replication-factor: 3    # 恢复能力
+
+kafka-producer-config:
+  # key的序列化器（why? ----> broker端接收的消息必须以字节数组 (byte[])的形式存在,而且必须是全限定类名）
+  key-serializer-class: org.apache.kafka.common.serialization.StringSerializer
+  # value的序列化器 (why? ----> broker端接收的消息必须以字节数组 (byte[])的形式存在，而且必须是全限定类名）
+  value-serializer-class: io.confluent.kafka.serializers.KafkaAvroSerializer
+  compression-type: snappy
+  acks: all # 承认一切,最强的可靠性。(这个参数用来指定分区中必须要有多少个副本收到这条消息，之后生产者才会认为这条消 息是成功写入的)
+  batch-size: 16384
+  batch-size-boost-factor: 100
+  linger-ms: 5
+  request-timeout-ms: 60000 #最长的等待请求响应时间
+  retry-count: 5
+
+kafka-consumer-config:
+  key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+  value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+  payment-consumer-group-id: payment-topic-consumer
+  restaurant-approval-consumer-group-id: restaurant-approval-topic-consumer
+  customer-group-id: customer-topic-consumer
+  auto-offset-reset: earliest
+  specific-avro-reader-key: specific.avro.reader
+  specific-avro-reader: true
+  batch-listener: true
+  auto-startup: true
+  concurrency-level: 3
+  session-timeout-ms: 10000
+  heartbeat-interval-ms: 3000
+  max-poll-interval-ms: 300000
+  max-poll-records: 500
+  max-partition-fetch-bytes-default: 1048576
+  max-partition-fetch-bytes-boost-factor: 1
+  poll-timeout-ms: 150
