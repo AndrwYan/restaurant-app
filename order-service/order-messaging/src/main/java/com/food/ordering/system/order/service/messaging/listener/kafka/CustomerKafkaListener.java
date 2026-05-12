@@ -26,7 +26,8 @@ public class CustomerKafkaListener implements KafkaConsumer<CustomerAvroModel> {
         this.orderMessagingDataMapper = orderMessagingDataMapper;
     }
 
-    // 1.监听kafka的 与consumer相关的topic，因为在consumer模块,会发送创建用户的事件到对应的topic上，这里主要是为了做用户数据的的冗余，避免订单服务再去请求用户数据
+    // 1.监听kafka的 与consumer相关的topic，因为在consumer模块,会发送创建用户的事件到对应的topic上，
+    // 这里主要是为了做用户数据的的冗余，避免订单服务再去请求用户数据
     @Override
     @KafkaListener(id = "${kafka-consumer-config.customer-group-id}", topics = "${order-service.customer-topic-name}")
     public void receive(@Payload List<CustomerAvroModel> messages,

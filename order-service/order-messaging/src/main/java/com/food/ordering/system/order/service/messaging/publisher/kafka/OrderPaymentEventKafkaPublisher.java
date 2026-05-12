@@ -41,6 +41,7 @@ public class OrderPaymentEventKafkaPublisher implements PaymentRequestMessagePub
         OrderPaymentEventPayload orderPaymentEventPayload =
                 kafkaMessageHelper.getOrderEventPayload(orderPaymentOutboxMessage.getPayload(),
                         OrderPaymentEventPayload.class);
+
         //2.得到sagaId
         String sagaId = orderPaymentOutboxMessage.getSagaId().toString();
 
@@ -49,10 +50,11 @@ public class OrderPaymentEventKafkaPublisher implements PaymentRequestMessagePub
                 sagaId);
 
         try {
+            // 构造出PaymentRequestAvroModel消息实体
             PaymentRequestAvroModel paymentRequestAvroModel = orderMessagingDataMapper
                     .orderPaymentEventToPaymentRequestAvroModel(sagaId, orderPaymentEventPayload);
 
-            //调send方法,kafka生产者发消息回调
+            // 调send方法,kafka生产者发消息回调，保证至少一次投递消息
             kafkaProducer.send(orderServiceConfigData.getPaymentRequestTopicName(),
                     sagaId,
                     paymentRequestAvroModel,
@@ -70,7 +72,5 @@ public class OrderPaymentEventKafkaPublisher implements PaymentRequestMessagePub
                            " to kafka with order id: {} and saga id: {}, error: {}",
                    orderPaymentEventPayload.getOrderId(), sagaId, e.getMessage());
         }
-
-
     }
 }

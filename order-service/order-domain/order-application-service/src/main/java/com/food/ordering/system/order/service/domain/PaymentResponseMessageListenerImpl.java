@@ -30,7 +30,10 @@ public class PaymentResponseMessageListenerImpl implements PaymentResponseMessag
 
     @Override
     public void paymentCancelled(PaymentResponse paymentResponse) {
+
+        // 回滚状态
         orderPaymentSaga.rollback(paymentResponse);
+
         log.info("Order is roll backed for order id: {} with failure messages: {}",
                 paymentResponse.getOrderId(),
                 String.join(FAILURE_MESSAGE_DELIMITER, paymentResponse.getFailureMessages()));

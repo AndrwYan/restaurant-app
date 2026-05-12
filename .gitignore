@@ -42,6 +42,11 @@ nbdist/
 *.xml.versionsBackup
 *.swp
 
+######################################################################
+# Local Docker Compose runtime data
+
+infrastructure/docker-compose/volumes/
+
 !*/build/*.java
 !*/build/*.html
 !*/build/*.xml

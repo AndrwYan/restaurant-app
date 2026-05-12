@@ -56,12 +56,14 @@ public class OrderPaymentSaga implements SagaStep<PaymentResponse> {
     @Transactional
     public void process(PaymentResponse paymentResponse) {
 
+        // 去对应事件的表中事务性发件箱表中通过条件判断
         Optional<OrderPaymentOutboxMessage> orderPaymentOutboxMessageResponse =
                 paymentOutboxHelper.getPaymentOutboxMessageBySagaIdAndSagaStatus(
                         UUID.fromString(paymentResponse.getSagaId()),
                         SagaStatus.STARTED
                 );
 
+        // 如果通过sagaId和状态判断是否处理过，因为处理过的支付成功的订单都会持久化到数据库中的，这里的sagaId的作用其实也是做了去重的操作
         if (orderPaymentOutboxMessageResponse.isPresent()) {
             log.info("An outbox message with saga id: {} is already processed!", paymentResponse.getSagaId());
             return;
@@ -74,7 +76,7 @@ public class OrderPaymentSaga implements SagaStep<PaymentResponse> {
 
         SagaStatus sagaStatus = orderSagaHelper.orderStatusToSagaStatus(domainEvent.getOrder().getOrderStatus());
 
-        // 持久化到表中
+        // 将消息订单支付成功的订单持久化到表中
         paymentOutboxHelper.save(getUpdatedPaymentOutboxMessage(orderPaymentOutboxMessage,
                 domainEvent.getOrder().getOrderStatus(), sagaStatus));
 

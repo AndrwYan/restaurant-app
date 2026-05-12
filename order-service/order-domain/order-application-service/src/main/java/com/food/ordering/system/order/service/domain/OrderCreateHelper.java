@@ -50,6 +50,7 @@ public class OrderCreateHelper {
 
         //2.校验餐厅。
         Restaurant restaurant = checkRestaurant(createOrderCommand);
+
         Order order = orderDataMapper.createOrderCommandToOrder(createOrderCommand);
 
         //3.初始化订单，并创建领域事件。
@@ -64,7 +65,7 @@ public class OrderCreateHelper {
     private Restaurant checkRestaurant(CreateOrderCommand createOrderCommand) {
         Restaurant restaurant = orderDataMapper.createOrderCommandToRestaurant(createOrderCommand);
         Optional<Restaurant> optionalRestaurant = restaurantRepository.findRestaurantInformation(restaurant);
-        if (optionalRestaurant.isPresent()) {
+        if (!optionalRestaurant.isPresent()) {
             log.warn("Could not find restaurant with restaurant id: {}", createOrderCommand.getRestaurantId());
             throw new OrderDomainException("Could not find restaurant with restaurant id: " +
                     createOrderCommand.getRestaurantId());

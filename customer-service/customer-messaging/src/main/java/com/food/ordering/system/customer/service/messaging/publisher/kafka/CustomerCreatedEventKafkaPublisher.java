@@ -36,7 +36,6 @@ public class CustomerCreatedEventKafkaPublisher implements CustomerMessagePublis
         log.info("Received CustomerCreatedEvent for customer id: {}",
                 customerCreatedEvent.getCustomer().getId().getValue());
         try {
-
             // 创建CustomerAvroModel实体
             CustomerAvroModel customerAvroModel = customerMessagingDataMapper
                     .paymentResponseAvroModelToPaymentResponse(customerCreatedEvent);
@@ -54,6 +53,12 @@ public class CustomerCreatedEventKafkaPublisher implements CustomerMessagePublis
         }
     }
 
+    /**
+     * @Description: 封装getCallback方法
+     * @param topicName:
+     * @param message:
+     * @return: org.springframework.util.concurrent.ListenableFutureCallback<org.springframework.kafka.support.SendResult<java.lang.String,com.food.ordering.system.kafka.order.avro.model.CustomerAvroModel>>
+     **/
     // 封装的CallBack回调
     private ListenableFutureCallback<SendResult<String, CustomerAvroModel>> getCallback(String topicName, CustomerAvroModel message) {
 
@@ -67,6 +72,7 @@ public class CustomerCreatedEventKafkaPublisher implements CustomerMessagePublis
             @Override
             public void onSuccess(SendResult<String, CustomerAvroModel> result) {
                 RecordMetadata metadata = result.getRecordMetadata();
+
                 log.info("Received new metadata. Topic: {}; Partition {}; Offset {}; Timestamp {}, at time {}",
                         metadata.topic(),
                         metadata.partition(),

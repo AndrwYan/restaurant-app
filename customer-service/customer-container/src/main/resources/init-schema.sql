@@ -1,5 +1,5 @@
-DROP SCHEMA IF EXISTS customer CASCADE;
 
+DROP SCHEMA IF EXISTS customer CASCADE;
 CREATE SCHEMA customer;
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -15,6 +15,7 @@ CREATE TABLE customer.customers
 
 DROP MATERIALIZED VIEW IF EXISTS customer.order_customer_m_view;
 
+-- 创建视图
 CREATE MATERIALIZED VIEW customer.order_customer_m_view
 TABLESPACE pg_default
 AS
