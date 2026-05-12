@@ -31,11 +31,13 @@ public class KafkaProducerImpl<K extends Serializable, V extends SpecificRecordB
         log.info("Sending message={} to topic={}", message, topicName);
 
         try {
+
             //异步的方式，发送结束之后调用回调函数，来实现异步的发送确认。
             ListenableFuture<SendResult<K, V>> kafkaResultFuture = kafkaTemplate.send(topicName, key, message);
 
             kafkaResultFuture.addCallback(callback);
         } catch (KafkaException e) {
+
             log.error("Error on kafka producer with key: {}, message: {} and exception: {}", key, message,
                     e.getMessage());
             throw new KafkaProducerException("Error on kafka producer with key: " + key + " and message: " + message);

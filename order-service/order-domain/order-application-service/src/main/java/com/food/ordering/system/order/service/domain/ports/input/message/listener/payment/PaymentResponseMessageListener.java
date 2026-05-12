@@ -9,4 +9,5 @@ public interface PaymentResponseMessageListener {
 
     //订单取消
     void paymentCancelled(PaymentResponse paymentResponse);
+
 }

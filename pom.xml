@@ -150,6 +150,7 @@
                 <artifactId>common-application</artifactId>
                 <version>${project.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>com.food.ordering.system</groupId>
                 <artifactId>common-dataaccess</artifactId>
@@ -165,6 +166,7 @@
                 <artifactId>kafka-consumer</artifactId>
                 <version>${project.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>com.food.ordering.system</groupId>
                 <artifactId>kafka-model</artifactId>
@@ -181,6 +183,7 @@
                 <version>${mockito.version}</version>
                 <scope>test</scope>
             </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -194,6 +197,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-logging</artifactId>
         </dependency>
+
     </dependencies>
 
     <build>

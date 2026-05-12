@@ -24,6 +24,7 @@ public class CustomerController {
     @PostMapping
     public ResponseEntity<CreateCustomerResponse> createCustomer(@RequestBody CreateCustomerCommand
                                                                              createCustomerCommand) {
+
         log.info("Creating customer with username: {}", createCustomerCommand.getUsername());
 
         // 依赖Domain层的service逻辑

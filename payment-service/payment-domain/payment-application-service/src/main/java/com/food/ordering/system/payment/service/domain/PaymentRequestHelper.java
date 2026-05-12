@@ -64,11 +64,16 @@ public class PaymentRequestHelper {
 
         log.info("Received payment complete event for order id: {}", paymentRequest.getOrderId());
         Payment payment = paymentDataMapper.paymentRequestModelToPayment(paymentRequest);
+
         CreditEntry creditEntry = getCreditEntry(payment.getCustomerId());
+
         List<CreditHistory> creditHistories = getCreditHistory(payment.getCustomerId());
+
         List<String> failureMessages = new ArrayList<>();
+
         PaymentEvent paymentEvent =
                 paymentDomainService.validateAndInitiatePayment(payment, creditEntry, creditHistories, failureMessages);
+
         persistDbObjects(payment, creditEntry, creditHistories, failureMessages);
 
         orderOutboxHelper.saveOrderOutboxMessage(paymentDataMapper.paymentEventToOrderEventPayload(paymentEvent),
@@ -110,7 +115,7 @@ public class PaymentRequestHelper {
 
     private CreditEntry getCreditEntry(CustomerId customerId) {
         Optional<CreditEntry> creditEntry = creditEntryRepository.findByCustomerId(customerId);
-        if (creditEntry.isPresent()) {
+        if (!creditEntry.isPresent()) {
             log.error("Could not find credit entry for customer: {}", customerId.getValue());
             throw new PaymentApplicationServiceException("Could not find credit entry for customer: " +
                     customerId.getValue());
@@ -120,7 +125,7 @@ public class PaymentRequestHelper {
 
     private List<CreditHistory> getCreditHistory(CustomerId customerId) {
         Optional<List<CreditHistory>> creditHistories = creditHistoryRepository.findByCustomerId(customerId);
-        if (creditHistories.isPresent()) {
+        if (!creditHistories.isPresent()) {
             log.error("Could not find credit history for customer: {}", customerId.getValue());
             throw new PaymentApplicationServiceException("Could not find credit history for customer: " +
                     customerId.getValue());

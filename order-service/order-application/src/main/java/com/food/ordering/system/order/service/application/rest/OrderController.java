@@ -9,14 +9,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
-
 @Slf4j
 @RestController
 @RequestMapping(value = "/orders", produces = "application/vnd.api.v1+json")
 public class OrderController {
-
     private final OrderApplicationService orderApplicationService;
-
+    
     public OrderController(OrderApplicationService orderApplicationService) {
         this.orderApplicationService = orderApplicationService;
     }
@@ -26,7 +24,6 @@ public class OrderController {
      * @param createOrderCommand:
      * @return: org.springframework.http.ResponseEntity<com.food.ordering.system.order.service.domain.dto.create.CreateOrderResponse>
      **/
-
     @PostMapping
     public ResponseEntity<CreateOrderResponse> createOrder(@RequestBody CreateOrderCommand createOrderCommand) {
 
@@ -44,6 +41,7 @@ public class OrderController {
     public ResponseEntity<TrackOrderResponse> getOrderByTrackingId(@PathVariable UUID trackingId) {
        TrackOrderResponse trackOrderResponse =
                orderApplicationService.trackOrder(TrackOrderQuery.builder().orderTrackingId(trackingId).build());
+
        log.info("Returning order status with tracking id: {}", trackOrderResponse.getOrderTrackingId());
        return  ResponseEntity.ok(trackOrderResponse);
     }

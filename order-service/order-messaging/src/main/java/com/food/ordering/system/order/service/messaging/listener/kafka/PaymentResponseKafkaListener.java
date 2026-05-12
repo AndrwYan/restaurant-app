@@ -44,6 +44,7 @@ public class PaymentResponseKafkaListener implements KafkaConsumer<PaymentRespon
 
         messages.forEach(paymentResponseAvroModel -> {
             try {
+
                 // 如果状态是已支付的
                 if (PaymentStatus.COMPLETED == paymentResponseAvroModel.getPaymentStatus()) {
                     log.info("Processing successful payment for order id: {}", paymentResponseAvroModel.getOrderId());
@@ -55,6 +56,7 @@ public class PaymentResponseKafkaListener implements KafkaConsumer<PaymentRespon
                 } else if (PaymentStatus.CANCELLED == paymentResponseAvroModel.getPaymentStatus() ||
                         PaymentStatus.FAILED == paymentResponseAvroModel.getPaymentStatus()) {
                     log.info("Processing unsuccessful payment for order id: {}", paymentResponseAvroModel.getOrderId());
+
                     paymentResponseMessageListener.paymentCancelled(orderMessagingDataMapper
                             .paymentResponseAvroModelToPaymentResponse(paymentResponseAvroModel));
                 }

@@ -36,6 +36,7 @@ public class PaymentEventKafkaPublisher implements PaymentResponseMessagePublish
     @Override
     public void publish(OrderOutboxMessage orderOutboxMessage,
                         BiConsumer<OrderOutboxMessage, OutboxStatus> outboxCallback) {
+
         OrderEventPayload orderEventPayload =
                 kafkaMessageHelper.getOrderEventPayload(orderOutboxMessage.getPayload(), OrderEventPayload.class);
 
